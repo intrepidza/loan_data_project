@@ -3,15 +3,27 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import duckdb
 
 st.set_page_config(page_title="Loan Data Dashboard", layout="wide")
-
 
 @st.cache_data
 def load_data(path):
     df = pd.read_parquet(path)
+    print("Data loaded from Parquet file.")
     return df
 
+# @st.cache_data
+# def load_data(path):
+#     with duckdb.connect("loan_data.duckdb") as conn:
+#         df_loans = conn.execute("""
+#                         SELECT *
+#                         FROM fct_loan_data fct
+#                         INNER JOIN dim_borrowers b on b.borrower_id = fct.borrower_id
+#                         INNER JOIN dim_loans l on l.loan_id = fct.loan_id
+#                         INNER JOIN dim_calendar c on c.calendar_id = fct.calendar_id 
+#         """).fetchdf()
+#         return df_loans
 
 df = load_data('loan_data.parquet')
 
@@ -107,10 +119,7 @@ st.divider()
 
 with col1:
     st.subheader("Loan Origination Trends Over Time")
-    loans_per_month = (
-        filtered.groupby(filtered['issue_date'].dt.to_period("M"))
-        ['loan_amount'].sum().reset_index()
-    )
+    loans_per_month = filtered.groupby(filtered['issue_date'].dt.to_period("M"))['loan_amount'].sum().reset_index()
     loans_per_month['issue_date'] = loans_per_month['issue_date'].astype(str)
     fig = px.line(
         loans_per_month, x='issue_date', y='loan_amount',
@@ -118,41 +127,69 @@ with col1:
     )
     st.plotly_chart(fig, use_container_width=True)
 
+    # st.subheader("Loan Status Distribution")
+    # status_counts = filtered['loan_status'].value_counts().reset_index()
+    # status_counts.columns = ['loan_status', 'count']
+    # pie_fig = px.pie(
+    #     status_counts,
+    #     values='count',
+    #     names='loan_status',
+    #     title='Loan Status Distribution')
+    # st.plotly_chart(pie_fig)
+
 with col2:
     st.subheader("Loan Distributions")
-    c1, c2 = st.columns(2)
+    # c1, c2 = st.columns(2)
+    c1 = st.columns(1)
 
     with c1:
-        fig = px.box(filtered, x='grade', y='loan_amount', color='grade',
-                     title="Loan Amount by Credit Grade")
+        fig = px.box(
+            filtered,
+            x='grade',
+            y='loan_amount',
+            color='grade',
+            title="Loan Amount by Credit Grade"
+        )
         st.plotly_chart(fig, use_container_width=True)
 
-    with c2:
-        fig = px.histogram(filtered, x='interest_rate', nbins=40, color='grade',
-                           title="Interest Rate Distribution")
-        st.plotly_chart(fig, use_container_width=True)
+    # with c2:
+    #     fig = px.histogram(
+    #         filtered,
+    #         x='interest_rate',
+    #         nbins=40,
+    #         color='grade',
+    #         title="Interest Rate Distribution"
+    #     )
+    #     st.plotly_chart(fig, use_container_width=True)
 
-    fig2 = px.violin(filtered, y='annual_income', x='purpose', color='grade',
-                     title="Income Distribution by Purpose", box=True)
-    st.plotly_chart(fig2, use_container_width=True)
+    # fig2 = px.bar(
+    #     filtered,
+    #     y='annual_income',
+    #     x='purpose',
+    #     color='grade',
+    #     title="Income Distribution by Purpose",
+    #     nbins=10,
+    #     # box=True
+    # )
+    # st.plotly_chart(fig2, use_container_width=True)
 
-with col3:
-    st.subheader("Loans by State")
-    state_summary = (
-        filtered.groupby('address_state')
-        .agg(total_amount=('loan_amount', 'sum'), count=('loan_amount', 'count'))
-        .reset_index()
-    )
-    fig = px.choropleth(
-        state_summary,
-        locations='address_state',
-        locationmode="USA-states",
-        color='total_amount',
-        color_continuous_scale="Blues",
-        scope="usa",
-        title="Total Loan Amount by State"
-    )
-    st.plotly_chart(fig, use_container_width=True)
+# with col3:
+#     st.subheader("Loans by State")
+#     state_summary = (
+#         filtered.groupby('address_state')
+#         .agg(total_amount=('loan_amount', 'sum'), count=('loan_amount', 'count'))
+#         .reset_index()
+#     )
+#     fig = px.choropleth(
+#         state_summary,
+#         locations='address_state',
+#         locationmode="USA-states",
+#         color='total_amount',
+#         color_continuous_scale="Blues",
+#         scope="usa",
+#         title="Total Loan Amount by State"
+#     )
+#     st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
 # st.caption("Data: Lending Club Public Dataset (2007–2020 Q1) — Dashboard by Streamlit + Plotly")

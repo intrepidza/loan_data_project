@@ -11,6 +11,7 @@ with duckdb.connect("loan_data.duckdb") as conn:
                     FROM fct_loan_data fct
                     INNER JOIN dim_borrowers b on b.borrower_id = fct.borrower_id
                     INNER JOIN dim_loans l on l.loan_id = fct.loan_id
+                    INNER JOIN dim_calendar c on c.calendar_id = fct.calendar_id 
     """).fetchdf()
 
 # df_loans = pd.read_csv('test.csv')

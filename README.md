@@ -11,7 +11,8 @@ Dagster is used to orchestrate the process.
 Dataset details:
 URL: https://www.kaggle.com/datasets/ethon0426/lending-club-20072020q1
 
-To note: 
+To note:
+- Using this dataset even though it's US related, since there does not appear to be a readily available SA dataset.
 - According to the dictionary, the dataset once container a 'member_id' column representing a borrower. This no longer exists. For the sake of simplification, it will be assumed that every loan entry is associated with a unique borrower. (using same 'id')
 
 
