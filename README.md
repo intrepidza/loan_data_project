@@ -55,32 +55,29 @@ Steps:
 
 -----------
 
-1) Copy branch to local compute path.
+1) Copy branch to local computer path.
 
 2) Create .env file in project root folder with variables:
     KAGGLE_USERNAME="[ENTER_YOUR_USERNAME_HERE]"
     KAGGLE_KEY="[ENTER_YOUR_API_KEY_HERE]"
 
-2) Using PowerShell, navigate to root of project and create python virtual environment with command: python -m venv .venv
+3) Using PowerShell, navigate to root of project and create python virtual environment with command: python -m venv .venv
 
-3) Activate virtual environment with command: .venv/scripts/activate
+4) Activate virtual environment with command: .venv/scripts/activate
 
-4) Install Python dependencies with command: pip install -r requirements_local.txt
+5) Install Python dependencies with command: pip install -r requirements_local.txt
 
-5) Navigate to 'dagster' folder and run command: $env:DAGSTER_HOME = Get-Location
+6) Navigate to 'dagster' folder and run command: $env:DAGSTER_HOME = Get-Location
 
-6) Run command: dagster dev
+7) Run command: dagster dev
 
-7) In web-browser:
+8) In web-browser:
     - navigate to: http://127.0.0.1:3000
     - Jobs > click ellipsis '...' next to '01_file_load_job' > Launch new run
-    - Jobs > click ellipsis '...' next to '02_dbt_model_transformation_job' > Launch new run
-    - Jobs > click ellipsis '...' next to '03_file_extracts_job' > Launch new run
+    - Jobs > click ellipsis '...' next to '02_dbt_model_transformation_job' > Launch new run (confirm if prompted)
+    - Jobs > click ellipsis '...' next to '03_file_extracts_job' > Launch new run (confirm if prompted)
 
-
-
-
-    - Assets > View Lineage (to view Assets as they materialize)
+    - Assets > View Lineage > Click gear icon on bottom right > Change graph to horizontal orientation (to view Assets as they materialize)
 
 ![alt text](https://github.com/intrepidza/loan_data_project/blob/main/assets/assets_materializing.jpg?raw=true)
 

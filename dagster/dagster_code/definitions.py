@@ -1,6 +1,6 @@
 import dagster as dg
 from dagster_code.assets import (
-    # kaggle_loan_data_csv,
+    kaggle_loan_data_csv,
     raw_loan_data,
     # dbt_project_assets,
     stg_loan_data_selected_cols,
@@ -25,7 +25,7 @@ from dagster_code.jobs import (
 def resources():
     return dg.Definitions(
         assets=[
-            # kaggle_loan_data_csv,
+            kaggle_loan_data_csv,
             raw_loan_data,
             # dbt_project_assets,
             stg_loan_data_selected_cols,

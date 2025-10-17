@@ -14,31 +14,40 @@ os.environ['KAGGLE_KEY'] = os.getenv('KAGGLE_KEY')
 # import kaggle after variable specification
 import kaggle
 
+
 # Kaggle dataset download and DuckDB creation/insert Assets
-# @asset(
-#     name="kaggle_loan_data_csv",
-#     group_name="01_file_loading",
-#     description="Downloads Loan Dataset from Kaggle"
-# )
-# def kaggle_loan_data_csv(context: AssetExecutionContext) -> str:
-#     dataset = "ethon0426/lending-club-20072020q1"
-#     destination_dir = Path.cwd().parent
-#     output_dir = destination_dir.joinpath('_processing')
+@asset(
+    name="kaggle_loan_data_csv",
+    group_name="01_file_loading",
+    pool="db",
+    description="Downloads Loan Dataset from Kaggle"
+)
+def kaggle_loan_data_csv(context: AssetExecutionContext) -> None:
+    dataset = "ethon0426/lending-club-20072020q1"
+    destination_dir = Path.cwd().parent
+    output_dir = destination_dir.joinpath('_processing')
 
-#     context.log.info(f"Downloading {dataset} to {output_dir}")
-#     kaggle.api.dataset_download_files(dataset, path=output_dir, unzip=True)
+    if os.path.exists(output_dir.joinpath('Loan_status_2007-2020Q3.csv')):
+        context.log.info("File already exists.")
+        return None
 
-#     os.rename('../_processing/Loan_status_2007-2020Q3.gzip', '../_processing/Loan_status_2007-2020Q3.csv')
+    context.log.info("File does not exist. Downloading...")
 
-#     context.log.info("Download complete.")
+    context.log.info(f"Downloading {dataset} to {output_dir}")
+    kaggle.api.dataset_download_files(dataset, path=output_dir, unzip=True)
 
-#     return os.path.abspath(output_dir)
+    os.rename('../_processing/Loan_status_2007-2020Q3.gzip', '../_processing/Loan_status_2007-2020Q3.csv')
+
+    context.log.info("Download complete.")
+
+    # return os.path.abspath(output_dir)
 
 
 @asset(
-        # deps=["kaggle_loan_data_csv"],
+        deps=["kaggle_loan_data_csv"],
         required_resource_keys={"duckdb"},
         group_name="01_file_loading",
+        pool="db",
 )
 def raw_loan_data(context):
     """Load raw CSV data into DuckDB staging table."""
@@ -143,6 +152,7 @@ def fct_loan_data(dbt: DbtCliResource):
         deps=["fct_loan_data", "dim_borrowers", "dim_loans"],
         required_resource_keys={"duckdb"},
         group_name="03_file_extracts",
+        pool="db",
 )
 def loan_data_parquet(context):
     """Generate Parquet file to be used by Streamlit."""

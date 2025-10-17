@@ -5,7 +5,7 @@ import dagster as dg
 file_load_job = dg.define_asset_job(
     name="01_file_load_job",
     selection=[
-        # kaggle_loan_data_csv,
+        "kaggle_loan_data_csv",
         "raw_loan_data",
     ]
 )
