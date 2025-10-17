@@ -81,12 +81,12 @@ Steps:
 
     - Assets > View Lineage (to view Assets as they materialize)
 
-![alt text](https://github.com/intrepidza/loan_data_dashboard/blob/main/assets/assets_materializing.jpg?raw=true)
+![alt text](https://github.com/intrepidza/loan_data_project/blob/main/assets/assets_materializing.jpg?raw=true)
 
 
 (Job method of materialization necessary since DuckDB is a single-user database. Alternative would be to change dependencies.)
 
-![alt text](https://github.com/intrepidza/loan_data_dashboard/blob/main/assets/dbt_lineage.jpg?raw=true)
+![alt text](https://github.com/intrepidza/loan_data_project/blob/main/assets/dbt_lineage.jpg?raw=true)
 
 -----------
 
@@ -111,7 +111,7 @@ Dagster will materialize the below assets in order:
 
 Dagster Lineage:
 
-![alt text](https://github.com/intrepidza/loan_data_dashboard/blob/main/assets/dagster_lineage.jpg?raw=true)
+![alt text](https://github.com/intrepidza/loan_data_project/blob/main/assets/dagster_lineage.jpg?raw=true)
 
 
 -----------
