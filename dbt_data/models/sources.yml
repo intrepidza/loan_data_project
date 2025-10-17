@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+    - name: duckdb
+      description: Staging and Processing database
+      schema: main
+      tables:
+          - name: raw_loan_data
+            meta:
+              dagster:
+                asset: "raw_loan_data"
+            description: Raw Loan Data as loaded from CSV file

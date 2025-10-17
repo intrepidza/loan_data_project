@@ -1,0 +1,34 @@
+# ignore secrets, virtual environments and typical python compilation artifacts
+secrets.toml
+# ignore basic python artifacts
+.env
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+# ignore duckdb
+# *.duckdb
+*.wal
+# ignore additional
+/_processing
+/.venv
+/.archive
+/logs
+loan_data.duckdb
+duckdb_migration.py
+ddb_queries.ipynb
+plotly_dashboard.py
+requirements_backup20251016a.txt
+/dagster/.telemetry
+/dagster/.tmp_dagster_home_is9yyg3o
+/dagster/.nux
+/dagster/history
+/dagster/logs
+/dagster/schedules
+/dbt_data/dev.duckdb
+duckdb_to_csv.py
+duckdb_to_parquet.py
+requirements_local_backup20251017.txt
+requirements_backup20251017.txt
+loan_data_small.duckdb
+requirements_STREAMLIT_LKG.txt
+/.scripts

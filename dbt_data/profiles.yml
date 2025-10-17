@@ -1,0 +1,8 @@
+dbt_data:
+  outputs:
+    dev:
+      type: duckdb
+      path: ../loan_data.duckdb
+      threads: 1
+
+  target: dev
