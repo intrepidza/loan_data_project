@@ -1,4 +1,4 @@
-from dagster import asset, AssetExecutionContext, AssetKey, SourceAsset
+from dagster import asset, AssetExecutionContext, AssetKey, SourceAsset, RetryPolicy
 from dotenv import load_dotenv
 from dagster_dbt import DbtCliResource, dbt_assets, DagsterDbtTranslator
 import os
@@ -61,20 +61,81 @@ def raw_loan_data(context):
         """)
         context.log.info("staging_loan_data created successfully.")
 
-# raw_loan_data_source = SourceAsset(key=AssetKey(["duckdb", "raw_loan_data"]))
+# ----------------------------------------------------------------------------------------------
+# Initially attempted 'multi-asset' method for DBT assets but this does not reference dependencies correctly...
+
+# class CustomDagsterDbtTranslator(DagsterDbtTranslator):
+#     def get_group_name(self, dbt_resource_props: Mapping[str, Any]) -> Optional[str]:
+#         return "02_dbt_assets"
+
+
+# @dbt_assets(
+#         manifest=Path("../dbt_data/target/manifest.json"),
+#         dagster_dbt_translator=CustomDagsterDbtTranslator(),
+#     )
+# def dbt_project_assets(context: AssetExecutionContext, dbt: DbtCliResource):
+#     yield from dbt.cli(["build"], context=context).stream()
+# ----------------------------------------------------------------------------------------------
 
 # DBT Assets
-class CustomDagsterDbtTranslator(DagsterDbtTranslator):
-    def get_group_name(self, dbt_resource_props: Mapping[str, Any]) -> Optional[str]:
-        return "02_dbt_assets"
+dbt_group_name = "02_dbt_model_transformation"
 
 
-@dbt_assets(
-        manifest=Path("../dbt_data/target/manifest.json"),
-        dagster_dbt_translator=CustomDagsterDbtTranslator(),
-    )
-def dbt_project_assets(context: AssetExecutionContext, dbt: DbtCliResource):
-    yield from dbt.cli(["build"], context=context).stream()
+@asset(
+        deps=["raw_loan_data"],
+        group_name=dbt_group_name,
+        pool="db",
+)
+def stg_loan_data_selected_cols(dbt: DbtCliResource):
+    dbt.cli(["run", "--select", "stg_loan_data_selected_cols"]).wait()
+
+
+@asset(
+        deps=["stg_loan_data_selected_cols"],
+        group_name=dbt_group_name,
+        pool="db",
+        retry_policy=RetryPolicy(
+            max_retries=3,
+            delay=5.0,  # 1 second initial delay
+        )
+)
+def dim_calendar(dbt: DbtCliResource):
+    dbt.cli(["run", "--select", "dim_calendar"]).wait()
+
+
+@asset(
+        deps=["stg_loan_data_selected_cols"],
+        group_name=dbt_group_name,
+        pool="db",
+        retry_policy=RetryPolicy(
+            max_retries=3,
+            delay=5.0,  # 1 second initial delay
+        )
+)
+def dim_borrowers(dbt: DbtCliResource):
+    dbt.cli(["run", "--select", "dim_borrowers"]).wait()
+
+
+@asset(
+        deps=["stg_loan_data_selected_cols"],  #, "dim_calendar"],
+        group_name=dbt_group_name,
+        pool="db",
+        retry_policy=RetryPolicy(
+            max_retries=3,
+            delay=5.0,  # 1 second initial delay
+        )
+)
+def dim_loans(dbt: DbtCliResource):
+    dbt.cli(["run", "--select", "dim_loans"]).wait()
+
+
+@asset(
+        deps=["stg_loan_data_selected_cols", "dim_calendar"],
+        group_name=dbt_group_name,
+        pool="db",
+)
+def fct_loan_data(dbt: DbtCliResource):
+    dbt.cli(["run", "--select", "fct_loan_data"]).wait()
 
 
 # Parquet file Asset for Streamlit
@@ -94,8 +155,7 @@ def loan_data_parquet(context):
             FROM fct_loan_data fct
             INNER JOIN dim_borrowers b on b.borrower_id = fct.borrower_id
             INNER JOIN dim_loans l on l.loan_id = fct.loan_id
-            WHERE issue_year >= 2016
-            LIMIT 1500000;
+            INNER JOIN dim_calendar c on c.calendar_id = fct.calendar_id
         """).fetchdf()
 
         result.to_parquet('../loan_data.parquet')

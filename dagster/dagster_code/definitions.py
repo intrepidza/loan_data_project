@@ -2,8 +2,13 @@ import dagster as dg
 from dagster_code.assets import (
     # kaggle_loan_data_csv,
     raw_loan_data,
-    dbt_project_assets,
+    # dbt_project_assets,
+    stg_loan_data_selected_cols,
+    dim_calendar,
+    dim_borrowers,
+    dim_loans,
     loan_data_parquet,
+    fct_loan_data,
 )
 from dagster_code.resources import (
     duckdb_resource,
@@ -22,7 +27,13 @@ def resources():
         assets=[
             # kaggle_loan_data_csv,
             raw_loan_data,
-            dbt_project_assets,
+            # dbt_project_assets,
+            stg_loan_data_selected_cols,
+            dim_calendar,
+            dim_borrowers,
+            dim_loans,
+            loan_data_parquet,
+            fct_loan_data,
             loan_data_parquet,
         ],
         resources={

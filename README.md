@@ -73,8 +73,20 @@ Steps:
 7) In web-browser:
     - navigate to: http://127.0.0.1:3000
     - Jobs > click ellipsis '...' next to '01_file_load_job' > Launch new run
-    - Jobs > click ellipsis '...' next to '02_dbt_assets_job' > Launch new run
+    - Jobs > click ellipsis '...' next to '02_dbt_model_transformation_job' > Launch new run
     - Jobs > click ellipsis '...' next to '03_file_extracts_job' > Launch new run
+
+
+
+
+    - Assets > View Lineage (to view Assets as they materialize)
+
+![alt text](https://github.com/intrepidza/loan_data_dashboard/blob/main/assets/assets_materializing.jpg?raw=true)
+
+
+(Job method of materialization necessary since DuckDB is a single-user database. Alternative would be to change dependencies.)
+
+![alt text](https://github.com/intrepidza/loan_data_dashboard/blob/main/assets/dbt_lineage.jpg?raw=true)
 
 -----------
 

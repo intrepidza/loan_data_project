@@ -12,10 +12,11 @@ file_load_job = dg.define_asset_job(
 
 # Job for generating tables from DBT models
 dbt_assets_job = dg.define_asset_job(
-    name="02_dbt_assets_job",
+    name="02_dbt_model_transformation_job",
     selection=[
         "stg_loan_data_selected_cols",
         "dim_borrowers",
+        "dim_calendar",
         "dim_loans",
         "fct_loan_data"
     ]

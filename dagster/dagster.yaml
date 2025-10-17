@@ -1,5 +1,5 @@
-run_coordinator:
-  module: dagster.core.run_coordinator
-  class: QueuedRunCoordinator
-  config:
-    max_concurrent_runs: 1
+concurrency:
+  pools:
+    granularity: "run"  # "op" (default: limits individual assets) or "run" (limits runs)
+    default_limit: 1   # Fallback limit for unconfigured pools
+    op_granularity_run_buffer: 1  # Buffer slots per run (for op granularity)

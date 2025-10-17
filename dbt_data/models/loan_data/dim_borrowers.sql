@@ -1,14 +1,13 @@
 {{ config(materialized='table') }}
 
 SELECT
-    member_id as borrower_id,
-    annual_inc,
-    emp_length
-    emp_title,
-    emp_length,
+    borrower_id,
+    annual_income,
+    employment_title,
+    employment_length
     home_ownership, 
-    annual_inc, 
-    addr_state,
+    annual_income, 
+    address_state,
     fico_range_low,
     fico_range_high  
 

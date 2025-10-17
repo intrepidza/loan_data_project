@@ -32,3 +32,4 @@ requirements_backup20251017.txt
 loan_data_small.duckdb
 requirements_STREAMLIT_LKG.txt
 /.scripts
+dagster/storage
