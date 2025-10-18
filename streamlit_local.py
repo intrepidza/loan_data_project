@@ -4,15 +4,29 @@ import duckdb
 import pandas as pd
 
 
-# Connect to DuckDB database and retrieve data:
-with duckdb.connect("loan_data.duckdb") as conn:
-    df_loans = conn.execute("""
-                    SELECT *
-                    FROM fct_loan_data fct
-                    INNER JOIN dim_borrowers b on b.borrower_id = fct.borrower_id
-                    INNER JOIN dim_loans l on l.loan_id = fct.loan_id
-                    INNER JOIN dim_calendar c on c.calendar_id = fct.calendar_id 
-    """).fetchdf()
+# # Connect to DuckDB database and retrieve data:
+# with duckdb.connect("loan_data.duckdb") as conn:
+#     df_loans = conn.execute("""
+#                     SELECT *
+#                     FROM fct_loan_data fct
+#                     INNER JOIN dim_borrowers b on b.borrower_id = fct.borrower_id
+#                     INNER JOIN dim_loans l on l.loan_id = fct.loan_id
+#                     INNER JOIN dim_calendar c on c.calendar_id = fct.calendar_id 
+#     """).fetchdf()
+
+@st.cache_data
+def load_data(path):
+    with duckdb.connect("loan_data.duckdb") as conn:
+        df_loans = conn.execute("""
+               SELECT *
+               FROM fct_loan_data fct
+               INNER JOIN dim_borrowers b on b.borrower_id = fct.borrower_id
+               INNER JOIN dim_loans l on l.loan_id = fct.loan_id
+               INNER JOIN dim_calendar c on c.calendar_id = fct.calendar_id
+               WHERE issue_date >= '2020-01-01'         
+        """).fetchdf()
+        print('data loaded')
+        return df_loans
 
 # df_loans = pd.read_csv('test.csv')
 # df_loans = pd.read_parquet('loan_data.parquet')

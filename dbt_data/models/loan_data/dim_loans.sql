@@ -6,7 +6,6 @@ SELECT
     grade,
     sub_grade,
     loan_status,
-    purpose,
     title,
     CASE
       WHEN grade IN ('A', 'B') THEN 'Low Risk'

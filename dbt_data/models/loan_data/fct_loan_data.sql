@@ -7,8 +7,7 @@ SELECT
   borrower_id,
   c.calendar_id,
   loan_amount,
-  funded_amount,
-  CAST(REPLACE(interest_rate, '%', '') AS DOUBLE) / 100 AS interest_rate,
+  interest_rate,
   installment
 
 FROM {{ ref('stg_loan_data_selected_cols') }} f

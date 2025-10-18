@@ -12,6 +12,8 @@ Dataset details:
 URL: https://www.kaggle.com/datasets/ethon0426/lending-club-20072020q1
 
 To note:
+- File has over 2.9 million records and 142 columns.
+- It includes accepted loans issued by Lending Club over between the years 2007 through 2020, including details on borrower characteristics, credit and account history, loan terms, loan status (current, paid, default, etc.).
 - Using this dataset even though it's US related, since there does not appear to be a readily available SA dataset.
 - According to the dictionary, the dataset once container a 'member_id' column representing a borrower. This no longer exists. For the sake of simplification, it will be assumed that every loan entry is associated with a unique borrower. (using same 'id')
 
