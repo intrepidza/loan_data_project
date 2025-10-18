@@ -6,7 +6,7 @@ SELECT
     grade,
     sub_grade,
     loan_status,
-    title,
+    purpose_description,
     CASE
       WHEN grade IN ('A', 'B') THEN 'Low Risk'
       WHEN grade IN ('C', 'D') THEN 'Medium Risk'

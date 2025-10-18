@@ -15,7 +15,7 @@ SELECT
     annual_inc AS annual_income, 
     LAST_DAY(CAST(strptime(issue_d, '%b-%Y') AS DATE)) AS issue_date,
     loan_status,
-    title,
+    title AS purpose_description,
     addr_state AS address_state,
     fico_range_low,
     fico_range_high
