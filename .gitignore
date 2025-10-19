@@ -22,4 +22,3 @@ loan_data.duckdb
 /dbt_data/dev.duckdb
 /.scripts
 dagster/storage
-temp.txt
