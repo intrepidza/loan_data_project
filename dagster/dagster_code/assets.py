@@ -40,8 +40,6 @@ def kaggle_loan_data_csv(context: AssetExecutionContext) -> None:
 
     context.log.info("Download complete.")
 
-    # return os.path.abspath(output_dir)
-
 
 @asset(
         deps=["kaggle_loan_data_csv"],
@@ -105,7 +103,7 @@ def stg_loan_data_selected_cols(dbt: DbtCliResource):
         pool="db",
         retry_policy=RetryPolicy(
             max_retries=3,
-            delay=5.0,  # 1 second initial delay
+            delay=5.0,
         )
 )
 def dim_calendar(dbt: DbtCliResource):
@@ -118,7 +116,7 @@ def dim_calendar(dbt: DbtCliResource):
         pool="db",
         retry_policy=RetryPolicy(
             max_retries=3,
-            delay=5.0,  # 1 second initial delay
+            delay=5.0,
         )
 )
 def dim_borrowers(dbt: DbtCliResource):
@@ -126,12 +124,12 @@ def dim_borrowers(dbt: DbtCliResource):
 
 
 @asset(
-        deps=["stg_loan_data_selected_cols"],  #, "dim_calendar"],
+        deps=["stg_loan_data_selected_cols"]
         group_name=dbt_group_name,
         pool="db",
         retry_policy=RetryPolicy(
             max_retries=3,
-            delay=5.0,  # 1 second initial delay
+            delay=5.0,
         )
 )
 def dim_loans(dbt: DbtCliResource):
