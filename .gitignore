@@ -15,7 +15,6 @@ secrets.toml
 /logs
 loan_data.duckdb
 duckdb_migration.py
-ddb_queries.ipynb
 plotly_dashboard.py
 requirements_backup20251016a.txt
 /dagster/.telemetry

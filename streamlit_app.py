@@ -2,7 +2,11 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-st.set_page_config(page_title="Loan Data Dashboard", layout="wide")
+st.set_page_config(
+    page_title="Loan Data Dashboard",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 
 @st.cache_data
@@ -11,6 +15,7 @@ def load_data(path):
         'issue_date',
         'purpose_description',
         'grade',
+        'sub_grade',
         'address_state',
         'loan_amount',
         'interest_rate',
@@ -20,6 +25,7 @@ def load_data(path):
         ]
     )
     df['grade'] = df['grade'].astype('category') 
+    df['sub_grade'] = df['sub_grade'].astype('category') 
     df['purpose_description'] = df['purpose_description'].astype('category')
     df['address_state'] = df['address_state'].astype('category')
     df['loan_status'] = df['loan_status'].astype('category')
@@ -120,20 +126,29 @@ with col2:
 
     col2.metric("Average Interest Rate", f"{avg_int_rate:.2f}%")
 
-    plot_grade_data = filtered.groupby('grade')['loan_amount'].sum().reset_index()
+    plot_grade_data = filtered.groupby(['grade', 'sub_grade'])['loan_amount'].sum().reset_index()
     plot_grade_data = plot_grade_data[plot_grade_data['grade'].isin(grade_filter)]
 
-    fig3 = px.bar(
+    # fig3 = px.bar(
+    #     plot_grade_data,
+    #     x='grade',
+    #     y='loan_amount',
+    #     color='grade',
+    #     title="Loan Amount by Credit Grade",
+    #     labels={
+    #         "grade": "Grade",
+    #         "loan_amount": "Loan Amount",
+    #         },
+    #     category_orders={'grade': ['A', 'B', 'C', 'D', 'E', 'F', 'G']},
+    # )
+    # st.plotly_chart(fig3, use_container_width=True)
+
+    fig3 = px.sunburst(
         plot_grade_data,
-        x='grade',
-        y='loan_amount',
-        color='grade',
+        path=['grade', 'sub_grade'],
+        values='loan_amount',
+        color='loan_amount',
         title="Loan Amount by Credit Grade",
-        labels={
-            "grade": "Grade",
-            "loan_amount": "Loan Amount",
-            },
-        category_orders={'grade': ['A', 'B', 'C', 'D', 'E', 'F', 'G']},
     )
     st.plotly_chart(fig3, use_container_width=True)
 
@@ -147,11 +162,28 @@ with col2:
     st.plotly_chart(fig4)
 
 
-with col3: 
-
+with col3:
     col3.metric("Loans Shown", f"{len(filtered)}")
     col3.metric("Average Borrower Annual Income", f"${avg_income:,.0f}")
 
+    plot_purpose_data = filtered.groupby('purpose_description')['loan_amount'].sum().reset_index()
+    plot_purpose_data = plot_purpose_data[plot_purpose_data['purpose_description'].isin(purpose_filter)]
+
+    # Loan Purpose Distribution
+    fig6 = px.bar(
+        plot_purpose_data,
+        x='purpose_description',
+        y='loan_amount',
+        color='purpose_description',
+        labels={
+            'purpose_description': 'Purpose', 
+            'loan_amount': 'Loan Amount',
+            },
+        title="Loan Purpose Distribution",
+    )
+    st.plotly_chart(fig6, use_container_width=True)
+
+    # Total Loan Amount by State
     state_summary = (
         filtered.groupby('address_state')
         .agg(total_amount=('loan_amount', 'sum'), count=('loan_amount', 'count'))
@@ -167,7 +199,6 @@ with col3:
         title="Total Loan Amount by State"
     )
     st.plotly_chart(fig5, use_container_width=True)
-
 
     # pie_fig4 = px.pie(
     #     status_counts,
@@ -186,20 +217,5 @@ with col3:
     #     title="Interest Rate Distribution"
     # )
     # st.plotly_chart(fig, use_container_width=True)
-
-
-    # # Income Distribution by Purpose
-    plot_purpose_data = filtered.groupby('purpose_description')['loan_amount'].sum().reset_index()
-    plot_purpose_data = plot_purpose_data[plot_purpose_data['purpose_description'].isin(purpose_filter)]
-
-    fig6 = px.bar(
-        plot_purpose_data,
-        x='purpose_description',
-        y='loan_amount',
-        color='purpose_description',
-        title="Income Distribution by Purpose",
-    )
-    st.plotly_chart(fig6, use_container_width=True)
-
 
 # st.divider()
