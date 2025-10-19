@@ -124,7 +124,7 @@ def dim_borrowers(dbt: DbtCliResource):
 
 
 @asset(
-        deps=["stg_loan_data_selected_cols"]
+        deps=["stg_loan_data_selected_cols"],
         group_name=dbt_group_name,
         pool="db",
         retry_policy=RetryPolicy(
