@@ -46,13 +46,13 @@ year_range = st.sidebar.slider(
 purpose_filter = st.sidebar.multiselect(
     "Loan Purpose",
     options=sorted(df['purpose_description'].unique()),
-    default=["Debt consolidation", "Credit card refinancing"]
+    default=df['purpose_description'].dropna().unique()
 )
 
 grade_filter = st.sidebar.multiselect(
     "Credit Grade",
     options=sorted(df['grade'].unique()),
-    default=["A", "B", "C"]
+    default=df['grade'].dropna().unique()
 )
 
 state_filter = st.sidebar.multiselect(
@@ -129,26 +129,14 @@ with col2:
     plot_grade_data = filtered.groupby(['grade', 'sub_grade'])['loan_amount'].sum().reset_index()
     plot_grade_data = plot_grade_data[plot_grade_data['grade'].isin(grade_filter)]
 
-    # fig3 = px.bar(
-    #     plot_grade_data,
-    #     x='grade',
-    #     y='loan_amount',
-    #     color='grade',
-    #     title="Loan Amount by Credit Grade",
-    #     labels={
-    #         "grade": "Grade",
-    #         "loan_amount": "Loan Amount",
-    #         },
-    #     category_orders={'grade': ['A', 'B', 'C', 'D', 'E', 'F', 'G']},
-    # )
-    # st.plotly_chart(fig3, use_container_width=True)
-
     fig3 = px.sunburst(
         plot_grade_data,
         path=['grade', 'sub_grade'],
         values='loan_amount',
         color='loan_amount',
         title="Loan Amount by Credit Grade",
+        color_continuous_scale='Blues',
+        # color_discrete_sequence=['blue', 'green']
     )
     st.plotly_chart(fig3, use_container_width=True)
 
@@ -199,23 +187,3 @@ with col3:
         title="Total Loan Amount by State"
     )
     st.plotly_chart(fig5, use_container_width=True)
-
-    # pie_fig4 = px.pie(
-    #     status_counts,
-    #     values='count',
-    #     names='loan_status',
-    #     title='Loan Status Distributiontest')
-    # st.plotly_chart(pie_fig4)
-
-
-    # # Interest Rate Distribution:
-    # fig = px.histogram(
-    #     filtered,
-    #     x='interest_rate',
-    #     nbins=40,
-    #     color='grade',
-    #     title="Interest Rate Distribution"
-    # )
-    # st.plotly_chart(fig, use_container_width=True)
-
-# st.divider()

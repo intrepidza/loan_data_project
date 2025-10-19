@@ -1,14 +1,16 @@
-Description:
+
+
+**Description**:
 
 Loan origination ETL and Dashboard mini-project
+
 It uses the Kaggle python package to download a Kaggle dataset relating to Lending Club loan data between the years 2007 to 2020...
 DBT SQL models are used to derive the dimension and fact tables in a DuckDB database.
 A Parquet file is generated from the resulting tables, to be used by Streamlit.
 Dagster is used to orchestrate the process.
 
------------
-
-Dataset details:
+<br><br/>
+**Dataset details**:
 URL: https://www.kaggle.com/datasets/ethon0426/lending-club-20072020q1
 
 To note:
@@ -16,28 +18,22 @@ To note:
 - It includes accepted loans issued by Lending Club over between the years 2007 through 2020, including details on borrower characteristics, credit and account history, loan terms, loan status (current, paid, default, etc.).
 - Using this dataset even though it's US related, since there does not appear to be a readily available SA dataset.
 - According to the dictionary, the dataset once container a 'member_id' column representing a borrower. This no longer exists. For the sake of simplification, it will be assumed that every loan entry is associated with a unique borrower. (using same 'id')
-
-
+- Limitations of the dataset: Mostly approved loans. No view of the methodology used to approve the loans.
+- Data is more useful as a post-issuance risk check to assess how much money is allocated to which types of loans, and the associated credit grades.
+<br><br/>
 -----------
 
-Dashboard is viewable at:
+**Dashboard is viewable at:**
 - https://loandatadashboard.streamlit.app
 
 loan_data.parquet - Showing only data from 2016 onwards.
 ( out of 2.9+ million rows)
 (This is owing to Github and Streamlit file-size limitations for free usage.)
 
+![alt text](https://github.com/intrepidza/loan_data_project/blob/main/assets/loan_data_dashboard.png?raw=true)
 
 
------------
-
-Requirements:
-- Python 3.12
-- Own Kaggle account
-
------------
-
-N.B. Folders:
+**Important folders:**
 
 loan_origination_project/
 
@@ -51,13 +47,27 @@ loan_origination_project/
 
 │  ├─ models/           <--- Contains DBT SQL models
 
+├─ ddb_queries.ipynb    <--- Jupyter Notebook for adhoc DuckDB queries
+
+├─ requirements_local.txt <--- Requirements for local Python virtual environment
+
+├─ requirements         <--- Requirements for Streamlit website
+<br><br/>
+
 -----------
 
-Steps:
+**Requirements:**
+- Python 3.12
+- Own Kaggle account
+<br><br/>
 
 -----------
 
-1) Copy branch to local computer path.
+**Steps:**
+<br><br/>
+-----------
+
+1) Copy Github branch to local computer path.
 
 2) Create .env file in project root folder with variables:
     KAGGLE_USERNAME="[ENTER_YOUR_USERNAME_HERE]"
@@ -74,7 +84,7 @@ Steps:
 7) Run command: dagster dev
 
 8) In web-browser:
-    - navigate to: http://127.0.0.1:3000
+    - Navigate to: http://127.0.0.1:3000
     - Jobs > click ellipsis '...' next to '01_file_load_job' > Launch new run
     - Jobs > click ellipsis '...' next to '02_dbt_model_transformation_job' > Launch new run (confirm if prompted)
     - Jobs > click ellipsis '...' next to '03_file_extracts_job' > Launch new run (confirm if prompted)
@@ -87,6 +97,12 @@ Steps:
 (Job method of materialization necessary since DuckDB is a single-user database. Alternative would be to change dependencies.)
 
 ![alt text](https://github.com/intrepidza/loan_data_project/blob/main/assets/dbt_lineage.jpg?raw=true)
+
+9) To run Streamlit locally:
+    - Navigate back to project root path and run command: streamlit run streamlit_app.py 
+
+
+
 
 -----------
 
@@ -117,15 +133,3 @@ Dagster Lineage:
 -----------
 
 
-- Pip installs:
-Minimum (for Streamlit):
-= streamlit
-= duckdb
-= plotly
-
-Additional:
-= dagster
-= dagster-webserver
-= dagster-dbt
-= kaggle
-= dbt-duckdb

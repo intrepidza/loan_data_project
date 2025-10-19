@@ -14,23 +14,12 @@ secrets.toml
 /.archive
 /logs
 loan_data.duckdb
-duckdb_migration.py
-plotly_dashboard.py
-requirements_backup20251016a.txt
 /dagster/.telemetry
-/dagster/.tmp_dagster_home_is9yyg3o
 /dagster/.nux
 /dagster/history
 /dagster/logs
 /dagster/schedules
 /dbt_data/dev.duckdb
-duckdb_to_csv.py
-duckdb_to_parquet.py
-requirements_local_backup20251017.txt
-requirements_backup20251017.txt
-loan_data_small.duckdb
-requirements_STREAMLIT_LKG.txt
-# /.scripts
+/.scripts
 dagster/storage
-streamlit_app_backup.py
-streamlit_alt_backup01.py
+temp.txt
