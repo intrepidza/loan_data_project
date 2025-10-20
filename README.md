@@ -25,6 +25,8 @@ The resulting Dashboard represents data between 2018 and 2020. This is read from
 
 The Dashboard allows one to filter on the Loan Purpose, Credit Rating and State. It provides an overview of the amount loaned, what purpose it was loaned for, the States of borrowers to which money was loaned, the term, and relating Credit Grades.
 
+N.B. This Dashboard was designed for a 'wide'/horizontal layout.
+
 ![alt text](https://github.com/intrepidza/loan_data_project/blob/main/assets/loan_data_dashboard.png?raw=true)
 
 
@@ -58,9 +60,12 @@ The Dashboard allows one to filter on the Loan Purpose, Credit Rating and State.
 
 ## Requirements:
 - Python 3.12
-- Own Kaggle account and generation of API Token. 
+- Own Kaggle account and generation of API Token.
+- Git 
 
 ## Steps:
+
+N.B. the process creates a large DuckDB database (1.6 gigabytes), so be sure there is enough space in the destination project path.
 
 1) Copy Github branch to local computer path:
 
@@ -108,10 +113,14 @@ The Dashboard allows one to filter on the Loan Purpose, Credit Rating and State.
 (Job method of materialization necessary since DuckDB is a single-user database. Alternative would be to change dependencies.)
 
 9) To run Streamlit locally:
-- Navigate back to project root path and run command: streamlit run streamlit_app.py 
+- Navigate back to project root path and run command:
+
+    streamlit run streamlit_app.py 
 
 
 ## Result:
+
+The above steps took about 5 minutes to download the data, load it into the database, transform it, generate the parquet file and show the data in a local Streamlit Dashboard.
 
 Dagster will materialize the below assets in order:
 
