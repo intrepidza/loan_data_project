@@ -12,16 +12,16 @@ Dataset URL: https://www.kaggle.com/datasets/ethon0426/lending-club-20072020q1
 
 To note:
 - File has over 2.9 million records and 142 columns.
-- It includes accepted loans issued by Lending Club over between the years 2007 through 2020, including details on borrower characteristics, credit and account history, loan terms, loan status (current, paid, default, etc.).
+- It includes accepted loans issued by Lending Club from the year 2007 through to the third quarter of 2020, including details on borrower characteristics, credit and account history, loan terms, loan status (current, paid, default, etc.).
 - I'm using this dataset even though it's US related, since there does not appear to be a readily available SA dataset.
-- According to the dictionary, the dataset once container a 'member_id' column representing a borrower. This no longer exists. For the sake of simplification, it will be assumed that every loan entry is associated with a unique borrower. (using same 'id')
-- Limitations of the dataset are that it mostly reflects approved loans. No view of the methodology used to approve the loans.
-- Data is more useful as a post-issuance risk check to assess how much money is allocated to which types of loans, and the associated credit grades.
+- According to the data dictionary, the dataset once contained a 'member_id' column representing a borrower, which no longer exists. For the sake of simplification, it will be assumed that every loan entry is associated with a unique borrower. (using same 'id' as the borrower identifier)
+- Limitations of the dataset are that it reflects approved loans and that the exact methodology used to analyse the data and approve the loans is unknown.
+- The data is however useful as a post-issuance risk check to assess how much money is allocated to which types of loans, and the associated credit grades etc.
 
 ## Dashboard is viewable at:
 - https://loandatadashboard.streamlit.app
 
-The resulting Dashboard represents data between 2018 and 2020. This is read from the parquet file 'loan_data.parquet' residing in the current source Github repository. (Only a subset of years were extracted owing to Github and Streamlit file-size limitations for free usage.)
+The resulting Dashboard represents data between 2018 up until the third quarter of 2020. This is read from the parquet file 'loan_data.parquet' residing in the current source Github repository. (Only a subset of years were extracted owing to Github and Streamlit file-size limitations for free usage.)
 
 The Dashboard allows one to filter on the Loan Purpose, Credit Rating and State. It provides an overview of the amount loaned, what purpose it was loaned for, the States of borrowers to which money was loaned, the term, and relating Credit Grades.
 
@@ -65,23 +65,23 @@ N.B. This Dashboard was designed for a 'wide'/horizontal layout.
 
 ## Steps:
 
-N.B. the process creates a large DuckDB database (1.6 gigabytes), so be sure there is enough space in the destination project path.
+N.B. Before proceeding, please note that the process creates a large DuckDB database (+-1.1 gigabytes), so be sure that there is enough space in the destination project path.
 
-1) Copy Github branch to local computer path:
+1) Copy Github branch to a local computer path:
 
     git clone https://github.com/intrepidza/loan_data_project.git
 
-2) Create .env file in project root folder with variables:
+2) Create a .env file in project root folder with variables:
 
     KAGGLE_USERNAME="[ENTER_YOUR_USERNAME_HERE]"
 
     KAGGLE_KEY="[ENTER_YOUR_API_KEY_HERE]"
 
-3) Using PowerShell, navigate to root of project and create python virtual environment with command: 
+3) Using PowerShell, navigate to root of project and create a python virtual environment with command: 
 
     python -m venv .venv
 
-4) Activate virtual environment with command: 
+4) Activate the virtual environment with command: 
 
     .venv/scripts/activate
 
@@ -93,11 +93,11 @@ N.B. the process creates a large DuckDB database (1.6 gigabytes), so be sure the
 
     $env:DAGSTER_HOME = Get-Location
 
-7) Run command: 
+7) Unde the same 'dagster' folder, run command: 
 
     dagster dev
 
-8) In web-browser:
+8) In a web-browser:
 - Navigate to: http://127.0.0.1:3000
 - Jobs > click ellipsis '...' next to '01_file_load_job' > Launch new run
 - Jobs > click ellipsis '...' next to '02_dbt_model_transformation_job' > Launch new run (confirm if prompted)
@@ -113,7 +113,7 @@ N.B. the process creates a large DuckDB database (1.6 gigabytes), so be sure the
 (Job method of materialization necessary since DuckDB is a single-user database. Alternative would be to change dependencies.)
 
 9) To run Streamlit locally:
-- Navigate back to project root path and run command:
+- Navigate back to the project root path and run command:
 
     streamlit run streamlit_app.py 
 
@@ -122,21 +122,19 @@ N.B. the process creates a large DuckDB database (1.6 gigabytes), so be sure the
 
 The above steps took about 5 minutes to download the data, load it into the database, transform it, generate the parquet file and show the data in a local Streamlit Dashboard.
 
-Dagster will materialize the below assets in order:
+Dagster materialized the below Assets in order:
 
 ### 01_file_load_job:
-- kaggle_loan_data_csv = Uses 'kaggle' Python module to download the dataset from Kaggle website in CSV format
-- raw_loan_data =  Imports the resulting CSV file into a table in a newly created DuckDB database 'loan_data.duckdb' in Project root directory
+- **kaggle_loan_data_csv** = Uses 'Kaggle' Python module to download the dataset from Kaggle website in CSV format
+- **raw_loan_data** =  Imports the resulting CSV file into a table in a newly created DuckDB database 'loan_data.duckdb' in the project root directory
 
 ### 02_dbt_assets_job:
-- stg_loan_data_selected_cols = uses DBT model to populate table with subset of columns from the 'raw_loan_data' table
-- dim_borrowers = uses DBT model to populate dimension table with borrower specific attributes
-- dim_loans = uses DBT model to populate dimension table with loan specific attributes
-- fct_loan_data = uses DBT model to populate fact table with loan specific measures
+- **stg_loan_data_selected_cols** = Uses DBT model to populate table of the same name with subset of columns from the 'raw_loan_data' table
+- **dim_borrowers** = Uses DBT model to populate dimension table of the same name with borrower specific attributes
+- **dim_loans** = Uses DBT model to populate dimension table of the same name with loan specific attributes
+- **fct_loan_data** = Uses DBT model to populate fact table of the same name with loan specific measures
 
 ![alt text](https://github.com/intrepidza/loan_data_project/blob/main/assets/dbt_lineage.png?raw=true)
 
 ### 03_file_extracts_job:
-- loan_data_parquet = Generates a Parquet file from dimension tables and fact table. (Currently limited to 1.5 million rows owing to Github/Streamlit free usage limits.)
-
-
+- **loan_data_parquet** = Generates a Parquet file from a dataset derived from the dimension and fact tables. (Currently limited to 1.5 million rows owing to Github/Streamlit free usage limits.)

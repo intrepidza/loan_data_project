@@ -19,6 +19,5 @@ loan_data.duckdb
 /dagster/history
 /dagster/logs
 /dagster/schedules
+/dagster/storage
 /dbt_data/dev.duckdb
-/.scripts
-dagster/storage
