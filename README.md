@@ -65,7 +65,7 @@ N.B. This Dashboard was designed for a 'wide'/horizontal layout.
 
 ## Steps:
 
-N.B. Before proceeding, please note that the process creates a large DuckDB database (+-1.1 gigabytes), so be sure that there is enough space in the destination project path.
+N.B. Before proceeding, please note that the process downloads a large CSV file (+-1.7 gigabytes) as well as creates a large DuckDB database (+-1.1 gigabytes), so be sure that there is enough space in the destination project path.
 
 1) Copy Github branch to a local computer path:
 
